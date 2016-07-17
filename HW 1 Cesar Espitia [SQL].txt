@@ -1,0 +1,143 @@
+-- QUERIES FOR HW --
+-- QUESTION 1 –
+
+SELECT * FROM FLIGHTS
+ORDER BY DISTANCE DESC
+
+--A: Flight 51 from JFK to HNL is the longest flight and therefore has the furthest distance.--
+
+-- QUESTION 2 –
+
+--What are the different numbers of engines in the planes table? For each number of engines, which aircraft have the most number of seats? Show the SQL statement(s) that support your result. --
+
+SELECT a.engines, max(a.seats) 
+FROM planes a
+group by a.engines
+
+# engines, max(a.seats)
+'1', '16'
+'2', '400'
+'3', '379'
+'4', '450'
+
+drop temporary table if exists table1
+create temporary table if not exists table1 as (
+SELECT a.engines, max(a.seats) as 'max'
+FROM planes a
+group by a.engines)
+
+select a.engines, b.manufacturer, max 
+from table1 a
+left join planes b
+on a.engines = b.engines and a.max = b.seats
+group by a.engines, b.manufacturer, max
+
+# engines, manufacturer, max
+'1', 'DEHAVILLAND', '16'
+'2', 'BOEING', '400'
+'3', 'AIRBUS', '379'
+'4', 'BOEING', '450'
+
+--A: There are planes with 1 through 4 engines.  For each engine number the table indicates which manufacturer has the max seats.
+-- 1 engine has 16 seats max and is a dehavilland
+-- 2 engines has 400 seats max and is a boeing
+-- 3 engines has 379 seats and is an airbus
+-- 4 engines has 450 seats and is an boeing
+
+Question 3.  
+select count(flight) from flights
+
+The total number of flights that are distinct are 336,776 from the flights table.
+
+
+Question 4.
+
+select carrier, count(flight) as 'number' from flights
+group by carrier
+
+# carrier, number
+'9E', '18460'
+'AA', '32729'
+'AS', '714'
+'B6', '54635'
+'DL', '48110'
+'EV', '54173'
+'F9', '685'
+'FL', '3260'
+'HA', '342'
+'MQ', '26397'
+'OO', '32'
+'UA', '58665'
+'US', '20536'
+'VX', '5162'
+'WN', '12275'
+'YV', '601'
+
+Question 5.
+
+select carrier, count(flight) as 'number' from flights
+group by carrier
+order by count(flight) desc
+
+# carrier, number
+'UA', '58665'
+'B6', '54635'
+'EV', '54173'
+'DL', '48110'
+'AA', '32729'
+'MQ', '26397'
+'US', '20536'
+'9E', '18460'
+'WN', '12275'
+'VX', '5162'
+'FL', '3260'
+'AS', '714'
+'F9', '685'
+'YV', '601'
+'HA', '342'
+'OO', '32'
+
+Question 6.
+select carrier, count(flight) as 'number' from flights
+group by carrier
+order by count(flight) desc
+limit 5
+
+# carrier, number
+'UA', '58665'
+'B6', '54635'
+'EV', '54173'
+'DL', '48110'
+'AA', '32729'
+
+Question 7.  
+select carrier, count(flight) as 'number' from flights
+where distance >= 1000
+group by carrier
+order by count(flight) desc
+limit 5
+
+# carrier, number
+'UA', '41135'
+'B6', '30022'
+'DL', '28096'
+'AA', '23583'
+'EV', '6248'
+
+Question 8.
+
+Personal Question.  
+
+Show the top 3 airlines, by number of flights that departed and arrived on time, ordered by number of flights in descending order.
+
+select carrier, count(flight) as 'number' from flights
+where dep_delay <=0 and arr_delay<=0
+group by carrier
+order by count(flight) desc
+limit 3
+
+# carrier, number
+'DL', '26185'
+'B6', '25504'
+'UA', '25041'
+
